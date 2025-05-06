@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Cheat Sheet</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" />
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>PostgreSQL Cheat Sheet</h2>
+                <p>The ultimate reference guide</p>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active">Introduction</li>
+                    <li>Database Operations</li>
+                    <li>Table Operations</li>
+                    <li>Data Types</li>
+                    <li>Constraints</li>
+                    <li>Inserting Data</li>
+                    <li>Basic Queries</li>
+                    <li>WHERE & Operators</li>
+                    <li>Sorting & Limiting</li>
+                    <li>UPDATE & DELETE</li>
+                    <li>Pattern Matching</li>
+                    <li>NULL Checks</li>
+                    <li>Aggregate Functions</li>
+                    <li>GROUP BY & HAVING</li>
+                    <li>Joins</li>
+                    <li>Set Operations</li>
+                    <li>Subqueries</li>
+                    <li>Views</li>
+                    <li>Transactions</li>
+                    <li>Indexes</li>
+                    <li>Export / Import</li>
+                    <li>psql Commands</li>
+                    <li>Functions & Expressions</li>
+                    <li>Window Functions</li>
+                    <li>SQL Playground</li>
+                    <li>Developer Info</li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <button id="theme-toggle" title="Toggle dark/light mode">🌙</button>
+            </header>
+            <section id="introduction" class="content-section active">
+                <h1>Introduction</h1>
+                <div class="intro-box">
+                    <p>A compact reference for writing PostgreSQL queries, perfect for quick recall during projects, interviews, and practice.</p>
+                    <div class="pg-box">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968342.png" alt="PostgreSQL Logo" class="pg-logo" width="40" height="40">
+                        <div>
+                            <strong>PostgreSQL</strong><br>
+                            <span>The world's most advanced open source relational database</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="why-box">
+                    <h2>Why PostgreSQL?</h2>
+                    <ul>
+                        <li>Open-source relational database management system</li>
+                        <li>Strong reputation for reliability and data integrity</li>
+                        <li>Robust feature set including JSON support</li>
+                        <li>Excellent performance for complex queries</li>
+                        <li>Active community and extensive documentation</li>
+                    </ul>
+                </div>
+                <div class="howto-box">
+                    <h2>How to Use This Guide</h2>
+                    <p>This cheat sheet is organized by topic, with each section containing common commands and examples.</p>
+                    <p>Use the navigation menu to jump between sections, or try out commands in the SQL Playground.</p>
+                    <em>Tip: Click any code snippet to copy it to your clipboard!</em>
+                </div>
+                <div class="getting-started-box">
+                    <h2>Getting Started</h2>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-bash">psql -U username -d database_name</code></pre>
+                    </div>
+                    <p>Connect to PostgreSQL using the command line client. Replace <code>username</code> and <code>database_name</code> with your credentials.</p>
+                    <p>Ready to dive in? Navigate through the sections using the menu to explore PostgreSQL commands and concepts.</p>
+                </div>
+            </section>
+            <section id="database-operations" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="DB" style="width:24px;vertical-align:middle;"> Database Operations</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Create a new database
+CREATE DATABASE dbname;
+
+-- Drop a database
+DROP DATABASE dbname;
+</code></pre>
+                </div>
+            </section>
+            <section id="table-operations" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png" alt="Table" style="width:24px;vertical-align:middle;"> Table Operations</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Create a new table
+CREATE TABLE table_name (
+    column1 datatype CONSTRAINT,
+    column2 datatype CONSTRAINT,
+    ...
+);
+
+-- Drop a table
+DROP TABLE table_name;
+
+-- Alter a table (add, drop, rename columns)
+ALTER TABLE table_name ADD COLUMN new_column datatype;
+ALTER TABLE table_name DROP COLUMN column_name;
+ALTER TABLE table_name RENAME COLUMN old_name TO new_name;
+</code></pre>
+                </div>
+            </section>
+            <section id="data-types" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" alt="Types" style="width:24px;vertical-align:middle;"> Data Types (Common)</h2>
+                <p>PostgreSQL supports a wide range of data types for storing different kinds of information. Choosing the right type ensures data integrity and efficient storage.</p>
+                <ul>
+                    <li><code>INTEGER</code> – Whole numbers, e.g., <code>age INTEGER</code></li>
+                    <li><code>SERIAL</code> – Auto-incrementing integer, often used for primary keys</li>
+                    <li><code>VARCHAR(n)</code> – Variable-length string with a limit, e.g., <code>name VARCHAR(50)</code></li>
+                    <li><code>TEXT</code> – Unlimited-length string</li>
+                    <li><code>BOOLEAN</code> – <code>TRUE</code> or <code>FALSE</code></li>
+                    <li><code>DATE</code>, <code>TIME</code>, <code>TIMESTAMP</code> – Date and time values</li>
+                    <li><code>NUMERIC(precision, scale)</code> – Exact numbers, e.g., <code>price NUMERIC(10,2)</code></li>
+                </ul>
+                <div class="card">
+                    <strong>Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email TEXT UNIQUE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);</code></pre>
+                    </div>
+                    <p>This creates a <code>users</code> table with various data types and constraints.</p>
+                </div>
+            </section>
+            <section id="constraints" class="content-section">
+                <h2>Constraints</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- NOT NULL
+column_name datatype NOT NULL
+
+-- UNIQUE
+column_name datatype UNIQUE
+
+-- PRIMARY KEY
+column_name datatype PRIMARY KEY
+-- or as table-level
+PRIMARY KEY (column1, column2)
+
+-- FOREIGN KEY
+FOREIGN KEY (col_name) REFERENCES other_table(col)
+
+-- CHECK
+CHECK (condition)
+
+-- DEFAULT
+column_name datatype DEFAULT value
+</code></pre>
+                </div>
+            </section>
+            <section id="inserting-data" class="content-section">
+                <h2>Inserting Data</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Insert single row
+INSERT INTO table_name (col1, col2) VALUES (val1, val2);
+
+-- Insert multiple rows
+INSERT INTO table_name (col1, col2) VALUES (val1, val2), (val3, val4);
+</code></pre>
+                </div>
+            </section>
+            <section id="basic-queries" class="content-section">
+                <h2>Basic Queries</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Select all
+SELECT * FROM table_name;
+
+-- Select specific columns
+SELECT col1, col2 FROM table_name;
+
+-- Filtering rows
+SELECT * FROM table_name WHERE condition;
+
+-- Aliases
+SELECT col1 AS alias_name FROM table_name;
+</code></pre>
+                </div>
+            </section>
+            <section id="where-operators" class="content-section">
+                <h2>WHERE Clause & Operators</h2>
+                <p>The <code>WHERE</code> clause is used to filter records that meet certain conditions. Combine multiple conditions with logical operators for more complex queries.</p>
+                <div class="card">
+                    <strong>Basic Usage:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM employees WHERE department = 'IT';</code></pre>
+                    </div>
+                    <p>Returns all employees in the IT department.</p>
+                </div>
+                <div class="card">
+                    <strong>Logical Operators:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM employees WHERE salary > 50000 AND is_active = TRUE;</code></pre>
+                    </div>
+                    <p>Returns active employees with a salary above 50,000.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM employees WHERE department = 'HR' OR department = 'Finance';</code></pre>
+                    </div>
+                    <p>Returns employees in either HR or Finance.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM employees WHERE NOT (is_active);</code></pre>
+                    </div>
+                    <p>Returns employees who are not active.</p>
+                </div>
+                <div class="card">
+                    <strong>Comparison Operators:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">-- SQL code here</code></pre>
+                    </div>
+                </div>
+            </section>
+            <section id="sorting-limiting" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/709/709496.png" alt="Sort" style="width:24px;vertical-align:middle;"> Sorting, Limiting, Offsetting <span class="help-icon" title="ORDER BY sorts results; LIMIT restricts the number of rows; OFFSET skips rows.">❓</span></h2>
+                <p>Use <code>ORDER BY</code> to sort results, <code>LIMIT</code> to restrict the number of rows, and <code>OFFSET</code> to skip rows.</p>
+                <div class="card">
+                    <strong>Sort Results:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM products ORDER BY price ASC;</code></pre>
+                    </div>
+                    <p>Lists products sorted by price from lowest to highest.</p>
+                </div>
+                <div class="card">
+                    <strong>Limit and Offset:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT * FROM products ORDER BY price DESC LIMIT 5 OFFSET 10;</code></pre>
+                    </div>
+                    <p>Returns 5 products, skipping the first 10, sorted by price from highest to lowest.</p>
+                </div>
+            </section>
+            <section id="update-delete" class="content-section">
+                <h2>UPDATE & DELETE</h2>
+                <p>Use <code>UPDATE</code> to modify existing records and <code>DELETE</code> to remove records. Always use a <code>WHERE</code> clause to avoid affecting all rows.</p>
+                <div class="card">
+                    <strong>Update Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">UPDATE employees SET salary = salary * 1.1 WHERE department = 'IT';</code></pre>
+                    </div>
+                    <p>Increases salary by 10% for all IT employees.</p>
+                </div>
+                <div class="card">
+                    <strong>Delete Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">DELETE FROM employees WHERE is_active = FALSE;</code></pre>
+                    </div>
+                    <p>Removes all employees who are not active.</p>
+                </div>
+            </section>
+            <section id="pattern-matching" class="content-section">
+                <h2>Pattern Matching & Ranges</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- LIKE & ILIKE (case-insensitive)
+WHERE col LIKE 'A%';
+WHERE col ILIKE '_ello';
+
+-- BETWEEN
+WHERE col BETWEEN 10 AND 20;
+
+-- IN / NOT IN
+WHERE col IN (val1, val2);
+</code></pre>
+                </div>
+            </section>
+            <section id="null-checks" class="content-section">
+                <h2>NULL Checks</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">WHERE col IS NULL;
+WHERE col IS NOT NULL;
+</code></pre>
+                </div>
+            </section>
+            <section id="aggregate-functions" class="content-section">
+                <h2>Aggregate Functions</h2>
+                <p>Aggregate functions perform calculations on multiple rows and return a single value. Commonly used with <code>GROUP BY</code>.</p>
+                <ul>
+                    <li><code>COUNT(*)</code> – Number of rows</li>
+                    <li><code>SUM(col)</code> – Total sum of a column</li>
+                    <li><code>AVG(col)</code> – Average value</li>
+                    <li><code>MIN(col)</code>, <code>MAX(col)</code> – Minimum/maximum value</li>
+                </ul>
+                <div class="card">
+                    <strong>Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT department, COUNT(*) FROM employees GROUP BY department;</code></pre>
+                    </div>
+                    <p>Counts employees in each department.</p>
+                </div>
+            </section>
+            <section id="group-by-having" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/1828/1828961.png" alt="Group By" style="width:24px;vertical-align:middle;"> GROUP BY and HAVING <span class="help-icon" title="GROUP BY groups rows sharing a value; HAVING filters groups.">❓</span></h2>
+                <p><code>GROUP BY</code> is used to group rows that have the same values in specified columns. <code>HAVING</code> is used to filter groups based on a condition.</p>
+                <div class="card">
+                    <strong>Group and Count:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT department, COUNT(*) FROM employees GROUP BY department;</code></pre>
+                    </div>
+                    <p>Counts the number of employees in each department.</p>
+                </div>
+                <div class="card">
+                    <strong>Group with Condition:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT department, AVG(salary) FROM employees GROUP BY department HAVING AVG(salary) > 60000;</code></pre>
+                    </div>
+                    <p>Shows departments with an average salary above 60,000.</p>
+                </div>
+            </section>
+            <section id="joins" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/3595/3595455.png" alt="Join" style="width:24px;vertical-align:middle;"> Joins <span class="help-icon" title="A JOIN combines rows from two or more tables based on a related column.">❓</span></h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- INNER JOIN
+SELECT * FROM a INNER JOIN b ON a.id = b.a_id;
+
+-- LEFT JOIN
+SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;
+
+-- RIGHT JOIN
+SELECT * FROM a RIGHT JOIN b ON a.id = b.a_id;
+
+-- FULL OUTER JOIN
+SELECT * FROM a FULL OUTER JOIN b ON a.id = b.a_id;
+
+-- CROSS JOIN
+SELECT * FROM a CROSS JOIN b;
+</code></pre>
+                </div>
+            </section>
+            <section id="set-operations" class="content-section">
+                <h2>Set Operations</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- UNION (removes duplicates)
+SELECT col FROM a UNION SELECT col FROM b;
+
+-- UNION ALL (keeps duplicates)
+SELECT col FROM a UNION ALL SELECT col FROM b;
+
+-- INTERSECT
+SELECT col FROM a INTERSECT SELECT col FROM b;
+
+-- EXCEPT
+SELECT col FROM a EXCEPT SELECT col FROM b;
+</code></pre>
+                </div>
+            </section>
+            <section id="subqueries" class="content-section">
+                <h2>Subqueries</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Scalar Subquery
+SELECT * FROM table WHERE col = (SELECT MAX(col) FROM table);
+
+-- Correlated Subquery
+SELECT * FROM a WHERE EXISTS (SELECT 1 FROM b WHERE a.id = b.a_id);
+</code></pre>
+                </div>
+            </section>
+            <section id="views" class="content-section">
+                <h2>Views</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">-- Create view
+CREATE VIEW view_name AS SELECT col FROM table;
+
+-- Drop view
+DROP VIEW view_name;
+</code></pre>
+                </div>
+            </section>
+            <section id="transactions" class="content-section">
+                <h2>Transactions</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">BEGIN;
+UPDATE ...;
+DELETE ...;
+COMMIT;
+-- or
+ROLLBACK;
+</code></pre>
+                </div>
+            </section>
+            <section id="indexes" class="content-section">
+                <h2>Indexes</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">CREATE INDEX idx_name ON table_name (col);
+DROP INDEX idx_name;
+</code></pre>
+                </div>
+            </section>
+            <section id="export-import" class="content-section">
+                <h2>Export / Import</h2>
+                <p>Use <code>pg_dump</code> to export (backup) a database and <code>psql</code> to import (restore) it.</p>
+                <div class="card">
+                    <strong>Export Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-bash">pg_dump mydb > backup.sql</code></pre>
+                    </div>
+                    <p>Exports the <code>mydb</code> database to a file called <code>backup.sql</code>.</p>
+                </div>
+                <div class="card">
+                    <strong>Import Example:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-bash">psql mydb < backup.sql</code></pre>
+                    </div>
+                    <p>Restores the <code>mydb</code> database from the <code>backup.sql</code> file.</p>
+                </div>
+            </section>
+            <section id="psql-commands" class="content-section">
+                <h2>psql Commands</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">\l        -- list databases
+\c dbname -- connect to database
+\dt       -- list tables
+\d table  -- describe table
+\q        -- quit
+</code></pre>
+                </div>
+            </section>
+            <section id="functions-expressions" class="content-section">
+                <h2>Functions & Expressions (Basic)</h2>
+                <p>PostgreSQL provides many built-in functions for math, strings, and dates. Use them in <code>SELECT</code> statements to transform or analyze data.</p>
+                <div class="card">
+                    <strong>Math Functions:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT ROUND(1.5), FLOOR(1.9), CEIL(1.2);</code></pre>
+                    </div>
+                    <p>Rounds, floors, or ceils the given numbers.</p>
+                </div>
+                <div class="card">
+                    <strong>String Functions:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT LENGTH('abc'), UPPER('abc'), LOWER('ABC'), CONCAT('a','b');</code></pre>
+                    </div>
+                    <p>Gets string length, converts to upper/lower case, or concatenates strings.</p>
+                </div>
+                <div class="card">
+                    <strong>Date/Time Functions:</strong>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">SELECT NOW(), CURRENT_DATE, CURRENT_TIME;</code></pre>
+                    </div>
+                    <p>Returns the current date and time.</p>
+                </div>
+            </section>
+            <section id="window-functions" class="content-section">
+                <h2>Window Functions (Intro)</h2>
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code class="language-sql">SELECT name, salary,
+       RANK() OVER (ORDER BY salary DESC)
+FROM employees;
+</code></pre>
+                </div>
+            </section>
+            <section id="cheat-sheet-summary" class="content-section">
+                <h2>Cheat Sheet Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <h3>Database</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>CREATE DATABASE dbname;</code><br>
+                            <code>DROP DATABASE dbname;</code>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Table</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>CREATE TABLE ...</code><br>
+                            <code>DROP TABLE ...</code>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Insert</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>INSERT INTO ... VALUES ...</code>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Select</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>SELECT * FROM ...</code>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Update</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>UPDATE ... SET ... WHERE ...</code>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Delete</h3>
+                        <div class="code-block-wrapper">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>DELETE FROM ... WHERE ...</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="sql-playground" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/2721/2721296.png" alt="Playground" style="width:28px;vertical-align:middle;"> SQL Playground</h2>
+                <div class="playground-db">
+                    <h3>Sample Database: <code>employees</code></h3>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    department_id INTEGER,
+    salary INTEGER,
+    is_active BOOLEAN
+);
+
+-- Sample Data
+INSERT INTO employees (name, department_id, salary, is_active) VALUES
+('Alice', 1, 70000, TRUE),
+('Bob', 2, 50000, TRUE),
+('Carol', 3, 60000, FALSE),
+('David', 1, 80000, TRUE),
+('Eve', 3, 65000, TRUE);
+</code></pre>
+                    </div>
+                    <h3>Sample Database: <code>departments</code></h3>
+                    <div class="code-block-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-sql">CREATE TABLE departments (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(30)
+);
+
+-- Sample Data
+INSERT INTO departments (name) VALUES
+('IT'),
+('HR'),
+('Finance');
+</code></pre>
+                    </div>
+                </div>
+                <div class="playground-box">
+                    <label for="query-select">Choose a query:</label>
+                    <select id="query-select">
+                        <option value="select-all">SELECT all employees</option>
+                        <option value="select-where">SELECT IT employees</option>
+                        <option value="aggregate-count">Count employees per department</option>
+                        <option value="update-salary">Update IT salaries</option>
+                        <option value="delete-inactive">Delete inactive employees</option>
+                    </select>
+                    <div id="query-description" class="playground-desc"></div>
+                    <textarea id="playground-editor" rows="5"></textarea>
+                    <button id="run-query">Run</button>
+                    <div id="playground-output" class="playground-output"></div>
+                </div>
+            </section>
+            <section id="developer-info" class="content-section">
+                <h2><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Developer" style="width:28px;vertical-align:middle;"> Developer Info</h2>
+                <div class="dev-card">
+                    <img src="developer.jpg" alt="Eyob Weldetensay" class="dev-avatar">
+                    <div>
+                        <h3>Eyob Weldetensay</h3>
+                        <p>Software Engineering Student<br>Arba Minch University</p>
+                        <p style="color:#3e92cc;">Passionate about databases, backend, and building useful tools for developers.</p>
+                    </div>
+                </div>
+            </section>
+            <section id="tips" class="content-section">
+                <h2>💡 Tips</h2>
+                <ul class="tips-list">
+                    <li>Always backup before DROP or DELETE.</li>
+                    <li>Use <code>EXPLAIN</code> to analyze query performance.</li>
+                    <li>Use transactions when modifying multiple rows.</li>
+                    <li>Write readable SQL with indentation.</li>
+                </ul>
+                <div style="font-size:1.2em;margin-top:1.5em;">🔥 <strong>End of Cheat Sheet</strong></div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html> 
